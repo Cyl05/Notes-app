@@ -6,6 +6,11 @@ import { createTheme, ThemeProvider } from '@mui/material';
 
 function App() {
     let [data, setData] = useState();
+    const [input, setInput] = useState({
+        title: "",
+        content: ""
+    });
+    let [notes, setNotes] = useState(false);
 
     const theme = createTheme({
         typography: {
@@ -13,19 +18,57 @@ function App() {
         }
     });
 
+    async function getData() {
+        const response = await axios.get("http://localhost:3000/items");
+        console.log(response.data);
+        setData(response.data);
+        setNotes(true);
+    }
+
     useEffect(() => {
-        async function getData() {
-            const response = await axios.get("http://localhost:3000/products");
-            console.log(response.data);
-            setData(response.data);
-        }
         getData();
     }, []);
 
+    function handleChange(event) {
+        let { value, name } = event.target;
+        setInput(prevState => ({
+            ...prevState,
+            [name]: value
+        }));
+    }
+
+    async function handleSubmit() {
+        const response = await axios.post("http://localhost:3000/items", {
+            title: input.title,
+            content: input.content
+        });
+        getData();
+        setInput({title: "", content: ""});
+    }
+
+    async function deleteNote(id) {
+        const response = await axios.post("http://localhost:3000/delete-note", {
+            id: id
+        });
+        getData();
+    }
+
     return (
         <ThemeProvider theme={theme}>
-            <Inputarea />
-            <Note />
+            <Inputarea
+                handleChange={handleChange}
+                handleSubmit={handleSubmit}
+                input={input}
+            />
+            {notes ? data.map(dataItem => 
+                <Note
+                    key={dataItem.id}
+                    id={dataItem.id}
+                    title={dataItem.title}
+                    content={dataItem.content}
+                    deleteNote={deleteNote}
+                />
+            ) : null}
         </ThemeProvider>
     );
 }
