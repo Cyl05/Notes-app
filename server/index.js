@@ -17,11 +17,12 @@ const db = new pg.Client({
 });
 db.connect();
 
+// The client will be blocked from making requests to the server without this module for some fucking reason
 app.use(cors({
     origin: 'http://localhost:5173'
 }));
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+app.use(bodyParser.json()); // parsing of the axios posts into JSON for operations
 
 
 app.get("/", (req, res) => {
@@ -29,13 +30,13 @@ app.get("/", (req, res) => {
 });
 
 app.get("/items", async (req, res) => {
-    const response = await db.query("SELECT * FROM items");
+    const response = await db.query("SELECT * FROM items ORDER BY id ASC");
     res.json(response.rows);
 });
 
 app.post("/items", async (req, res) => {
     try {
-        const response = await db.query("INSERT INTO items (title, content) VALUES ($1, $2)", [req.body.title, req.body.content]);
+        await db.query("INSERT INTO items (title, content) VALUES ($1, $2)", [req.body.title, req.body.content]);
         res.sendStatus(200);
     } catch (err) {
         console.log(`Error ocurred when inserting data: ${err}`);
@@ -45,13 +46,24 @@ app.post("/items", async (req, res) => {
 
 app.post("/delete-note", async(req, res) => {
     try {
-        const response = await db.query("DELETE FROM items WHERE id = $1", [req.body.id]);
+        await db.query("DELETE FROM items WHERE id = $1", [req.body.id]);
         res.sendStatus(200);
     } catch (err) {
         console.log(`Error ocurred when deleting note ${req.body.id} : ${err}`);
         res.sendStatus(500);
     }
-})
+});
+
+app.post("/edit-post", async (req, res) => {
+    let {editTitle, editContent, id} = req.body;
+    try {
+        await db.query("UPDATE items SET title=$1, content=$2 WHERE id=$3", [editTitle, editContent, id]);
+        res.sendStatus(200);
+    } catch (err) {
+        console.log(`Error updating values: ${err}`);
+        res.sendStatus(500);
+    }
+});
 
 app.listen(port, () => {
     console.log(`Server listening on the port ${port}`);

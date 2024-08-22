@@ -59,7 +59,7 @@ body {
 .note button {
     position: relative;
     float: right;
-    margin-right: 10px;
+    margin: 10px 10px 0 0;
     color: #f5ba13;
     border: none;
     width: 36px;

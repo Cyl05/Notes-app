@@ -5,12 +5,12 @@ import Note from "./Note.jsx";
 import { createTheme, ThemeProvider } from '@mui/material';
 
 function App() {
-    let [data, setData] = useState();
-    const [input, setInput] = useState({
+    let [data, setData] = useState(); // retrieval of data
+    const [input, setInput] = useState({ // getting create post input
         title: "",
         content: ""
     });
-    let [notes, setNotes] = useState(false);
+    let [editing, setEditing] = useState(null); // management of edit state
 
     const theme = createTheme({
         typography: {
@@ -20,14 +20,13 @@ function App() {
 
     async function getData() {
         const response = await axios.get("http://localhost:3000/items");
-        console.log(response.data);
         setData(response.data);
-        setNotes(true);
     }
 
+    // fetch data on load
     useEffect(() => {
         getData();
-    }, []);
+    }, []); 
 
     function handleChange(event) {
         let { value, name } = event.target;
@@ -38,7 +37,7 @@ function App() {
     }
 
     async function handleSubmit() {
-        const response = await axios.post("http://localhost:3000/items", {
+        await axios.post("http://localhost:3000/items", {
             title: input.title,
             content: input.content
         });
@@ -47,10 +46,24 @@ function App() {
     }
 
     async function deleteNote(id) {
-        const response = await axios.post("http://localhost:3000/delete-note", {
+        await axios.post("http://localhost:3000/delete-note", {
             id: id
         });
         getData();
+    }
+
+    async function saveNote(id, editInputs) {
+        setEditing(null);
+        await axios.post("http://localhost:3000/edit-post", {
+            id: id,
+            editTitle: editInputs.editTitle,
+            editContent: editInputs.editContent
+        });
+        getData();
+    }
+
+    function editNote(id) {
+        setEditing(id);
     }
 
     return (
@@ -60,13 +73,24 @@ function App() {
                 handleSubmit={handleSubmit}
                 input={input}
             />
-            {notes ? data.map(dataItem => 
+            {data ? data.map(dataItem => 
                 <Note
                     key={dataItem.id}
                     id={dataItem.id}
                     title={dataItem.title}
                     content={dataItem.content}
+                    editing={editing === dataItem.id}
+                    /* sets editing true only for the note whose edit 
+                    button got clicked, edit sends back id which gets 
+                    handled by "editNote" function and id is assigned 
+                    to "editing" state variable
+
+                    Therefore, returns true if sent id matches with note id
+                    */
+
                     deleteNote={deleteNote}
+                    saveNote={saveNote}
+                    editNote={editNote}
                 />
             ) : null}
         </ThemeProvider>
