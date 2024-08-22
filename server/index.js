@@ -25,7 +25,7 @@ app.get("/", (req, res) => {
 });
 
 app.get("/products", async (req, res) => {
-    const response = await db.query("SELECT * FROM products");
+    const response = await db.query("SELECT * FROM items");
     res.json(response.rows);
 });
 

@@ -1,0 +1,69 @@
+@import url('https://fonts.googleapis.com/css2?family=Shadows+Into+Light&display=swap');
+
+body {
+    background-color: #fbee7e;
+    background-image: url("https://www.transparenttextures.com/patterns/notebook-dark.png");
+}
+
+.input-area {
+    display: block;
+    margin: 10vh auto;
+    width: 50%;
+    padding: 10px;
+    background-color: white;
+    border-radius: 10px;
+}
+
+.input-area div {
+    margin-bottom: 8px;
+}
+
+.input-area>div.css-wb57ya-MuiFormControl-root-MuiTextField-root {
+    margin-bottom: 0;
+}
+
+.input-area>button {
+    position: absolute;
+    top: 30%;
+    right: 26%;
+    box-shadow: none;
+    background-color: #e4d00a;
+}
+
+.input-area>button:hover {
+    background-color: #A07908;
+}
+
+.note {
+    background: #fff;
+    border-radius: 7px;
+    box-shadow: 0 2px 5px #ccc;
+    padding: 10px;
+    width: 240px;
+    margin: 16px;
+    float: left;
+}
+
+.note h1 {
+    font-size: 1.1em;
+    margin-bottom: 6px;
+}
+
+.note p {
+    font-size: 1.1em;
+    margin-bottom: 10px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.note button {
+    position: relative;
+    float: right;
+    margin-right: 10px;
+    color: #f5ba13;
+    border: none;
+    width: 36px;
+    height: 36px;
+    cursor: pointer;
+    outline: none;
+}
